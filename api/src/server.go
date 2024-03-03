@@ -51,6 +51,9 @@ func main(){
 
   router := gin.Default()
   router.POST("/signin",createUser(db))
+  router.POST("/login",login(db))
+  router.POST("/travel",travel(db))
+  router.POST()
   router.Run("localhost:3050")
 
 }
@@ -80,5 +83,29 @@ func createUser(db *sql.DB) gin.HandlerFunc{
 
         c.JSON(http.StatusCreated, gin.H{"id": id})
     }
+}
+
+func login(db *sql.DB) gin.HandlerFunc{
+  return func(c *gin.Context){
+    var err error
+    var user users
+    if err = c.ShouldBindJSON(&user);err!=nil{
+      c.String(http.StatusBadRequest, "Bad Request")
+    }
+    result, err := db.Exec("Select * from users where email=?",user.Email)
+    if err != nil{
+      c.Status(http.StatusNotFound)
+    }
+    fmt.Println(result)
+    c.JSON(http.StatusOK,"Logged in successfully")
+  }
+}
+
+func travel(db *sql.DB) gin.HandlerFunc{
+  return func(c *gin.Context){
+    var err error
+    var user users
+    
+  }
 }
 
